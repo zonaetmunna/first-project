@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose'
-import bcrypt from 'bcrypt'
 
 import {
   StudentModel,
@@ -8,7 +7,6 @@ import {
   TStudent,
   TUserName,
 } from './student.interface'
-import config from '../../config/config'
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -80,10 +78,11 @@ const localGuradianSchema = new Schema<TLocalGuardian>({
 const studentSchema = new Schema<TStudent, StudentModel>(
   {
     id: { type: String, required: [true, 'ID is required'], unique: true },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
-      maxlength: [20, 'Password can not be more than 20 characters'],
+    user: {
+      type: Schema.Types.ObjectId,
+      unique: true,
+      ref: 'User',
+      required: [true, 'User is required'],
     },
     name: {
       type: userNameSchema,
@@ -132,14 +131,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Local guardian information is required'],
     },
     profileImg: { type: String },
-    isActive: {
-      type: String,
-      enum: {
-        values: ['active', 'blocked'],
-        message: '{VALUE} is not a valid status',
-      },
-      default: 'active',
-    },
+
     isDeleted: {
       type: Boolean,
       default: false,
@@ -155,24 +147,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 // virtual property : fullName
 studentSchema.virtual('fullName').get(function () {
   return this.name.firstName + this.name.middleName + this.name.lastName
-})
-
-// pre save middleware/ hook : will work on create()  save()
-studentSchema.pre('save', async function (next) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this // doc
-  // hashing password and save into DB
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  )
-  next()
-})
-
-// post save middleware / hook
-studentSchema.post('save', function (doc, next) {
-  doc.password = ''
-  next()
 })
 
 // Query Middleware
