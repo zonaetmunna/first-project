@@ -152,14 +152,13 @@ const studentSchema = new Schema<TStudent, StudentModel>(
   },
 )
 
-// virtual
+// virtual property : fullName
 studentSchema.virtual('fullName').get(function () {
   return this.name.firstName + this.name.middleName + this.name.lastName
 })
 
 // pre save middleware/ hook : will work on create()  save()
 studentSchema.pre('save', async function (next) {
-  // console.log(this, 'pre hook : we will save  data');
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this // doc
   // hashing password and save into DB
