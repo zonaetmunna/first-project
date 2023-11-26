@@ -13,6 +13,17 @@
     "prettier": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
     "prettier-fix": "npx prettier --write src"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -22,7 +33,6 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "http-status": "^1.7.3",
-    "joi": "^17.11.0",
     "mongoose": "^8.0.1",
     "zod": "^3.22.4"
   },
