@@ -4,6 +4,10 @@ import { Student } from '../students/student.model'
 import { TUser } from './user.interface'
 import { User } from './user.model'
 
+/* const createUserIntoDB = async (userData: TUser) => {
+  return await User.create(userData)
+} */
+
 const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // create a user object
   const userData: Partial<TUser> = {}

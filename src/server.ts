@@ -6,6 +6,10 @@ async function main() {
   try {
     await mongoose.connect(config.database_url as string)
 
+    if (config.node_env === 'production') {
+      console.log('Database connected successfully')
+    }
+
     app.listen(config.port, () => {
       console.log(`app is listening on port ${config.port}`)
     })

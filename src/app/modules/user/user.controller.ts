@@ -12,6 +12,7 @@ const createStudent = async (
 ) => {
   try {
     const { password, student: studentData } = req.body
+    console.log(password, studentData)
 
     // const zodParsedData = studentValidationSchema.parse(studentData);
 
@@ -20,7 +21,7 @@ const createStudent = async (
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Student is created succesfully',
+      message: 'Student is created successfully',
       data: result,
     })
   } catch (err) {
