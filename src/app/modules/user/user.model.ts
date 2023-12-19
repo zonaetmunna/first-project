@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { TUser } from './user.interface'
+import { TUser, UserModel } from './user.interface'
 import bcrypt from 'bcrypt'
 import config from '../../config'
 
@@ -19,9 +19,12 @@ const userSchema = new Schema<TUser>(
       required: true,
       default: true,
     },
+    passwordChangedAt: {
+      type: Date,
+    },
     role: {
       type: String,
-      enum: ['admin', 'student', 'faculty'],
+      enum: ['student', 'faculty', 'admin'],
     },
     status: {
       type: String,
@@ -31,7 +34,6 @@ const userSchema = new Schema<TUser>(
     isDeleted: {
       type: Boolean,
       default: false,
-      required: true,
     },
   },
   {
@@ -39,6 +41,7 @@ const userSchema = new Schema<TUser>(
   },
 )
 
+// pre method for hashing password before saving
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this // doc
@@ -50,9 +53,33 @@ userSchema.pre('save', async function (next) {
   next()
 })
 
+// post method for ignore password in response
 userSchema.post('save', function (doc, next) {
   doc.password = ''
   next()
 })
 
-export const User = model<TUser>('User', userSchema)
+// statics methods for checking if the user exist
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id }).select('+password')
+}
+
+// statics methods for checking if passwords are matched
+userSchema.statics.isPasswordMatched = async function (
+  plainTextPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword)
+}
+
+// statics methods for checking if JWT is issued before password changed
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimestamp: number,
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000
+  return passwordChangedTime > jwtIssuedTimestamp
+}
+
+export const User = model<TUser, UserModel>('User', userSchema)

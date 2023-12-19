@@ -1,34 +1,53 @@
 import httpStatus from 'http-status'
 
-import { NextFunction, Request, Response } from 'express'
 import { UserServices } from './user.service'
-// import { userValidation } from './user.validation'
 import sendResponse from '../../utils/sendResponse'
+import catchAsync from '../../utils/catchAsync'
 
-const createStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { password, student: studentData } = req.body
-    console.log(password, studentData)
+// create student controller
+const createStudent = catchAsync(async (req, res) => {
+  const { password, student: studentData } = req.body
 
-    // const zodParsedData = studentValidationSchema.parse(studentData);
+  const result = await UserServices.createStudentIntoDB(password, studentData)
 
-    const result = await UserServices.createStudentIntoDB(password, studentData)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student is created successfully',
+    data: result,
+  })
+})
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Student is created successfully',
-      data: result,
-    })
-  } catch (err) {
-    next(err)
-  }
-}
+// create a faculty controller
+const createFaculty = catchAsync(async (req, res) => {
+  const { password, faculty: facultyData } = req.body
+
+  const result = await UserServices.createFacultyIntoDB(password, facultyData)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Faculty is created successfully',
+    data: result,
+  })
+})
+
+// create a admin controller
+const createAdmin = catchAsync(async (req, res) => {
+  const { password, admin: adminData } = req.body
+
+  const result = await UserServices.createAdminIntoDB(password, adminData)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Admin is created successfully',
+    data: result,
+  })
+})
 
 export const UserControllers = {
   createStudent,
+  createFaculty,
+  createAdmin,
 }
