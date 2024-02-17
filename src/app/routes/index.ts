@@ -5,11 +5,12 @@ import { AcademicSemesterRoutes } from '../modules/academicSemester/academicSeme
 import { AcademicFacultyRoutes } from '../modules/academicFaculty/academicFaculty.route'
 import { AcademicDepartmentRoutes } from '../modules/academicDepartment/academicDepartment.route'
 import { AdminRoutes } from '../modules/admin/admin.route'
-import { FacultyRoutes } from '../modules/Faculty/faculty.route'
-import { CourseRoutes } from '../modules/Course/course.route'
+import { FacultyRoutes } from '../modules/faculty/faculty.route'
+import { CourseRoutes } from '../modules/course/course.route'
 import { SemesterRegistrationRoute } from '../modules/semesterRegistration/SemesterRegistration.route'
 import { offeredCourseRoutes } from '../modules/OfferedCourse/offeredCourse.route'
 import { AuthRoutes } from '../modules/Auth/auth.route'
+import { EnrolledCourseRoutes } from '../modules/EnrolledCourse/enrolledCourse.route'
 
 const router = Router()
 
@@ -57,6 +58,10 @@ const moduleRoutes = [
   {
     path: '/auth',
     route: AuthRoutes,
+  },
+  {
+    path: '/enrolled-courses',
+    route: EnrolledCourseRoutes,
   },
 ]
 

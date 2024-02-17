@@ -3,10 +3,11 @@ import { USER_ROLE } from './user.constant'
 
 export type TUser = {
   id: string
+  email: string
   password: string
   needPasswordChange: boolean
   passwordChangedAt?: Date
-  role: 'admin' | 'student' | 'faculty'
+  role: 'superAdmin' | 'admin' | 'student' | 'faculty'
   status: 'in-progress' | 'blocked'
   isDeleted: boolean
 }

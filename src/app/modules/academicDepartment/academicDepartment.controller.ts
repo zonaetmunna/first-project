@@ -17,13 +17,14 @@ const createAcademicDepartment = catchAsync(async (req, res) => {
 
 const getAllAcademicDepartments = catchAsync(async (req, res) => {
   const result =
-    await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB()
+    await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB(req.query)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Academic departments are retrieved successfully',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })
 
@@ -59,8 +60,8 @@ const updateAcademicDepartment = catchAsync(async (req, res) => {
 })
 
 export const AcademicDepartmentControllers = {
-  createAcademicDepartment: createAcademicDepartment,
+  createAcademicDepartment,
   getAllAcademicDepartments,
   getSingleAcademicDepartment,
-  updateAcademicDepartment: updateAcademicDepartment,
+  updateAcademicDepartment,
 }

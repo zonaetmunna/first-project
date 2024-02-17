@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/AppError'
 import { CourseSearchableFields } from './course.constant'
-import { TCourse, TCoursefaculty } from './course.interface'
+import { TCourse, TCourseFaculty } from './course.interface'
 import { Course, CourseFaculty } from './course.model'
 
 const createCourseIntoDB = async (payload: TCourse) => {
@@ -23,7 +23,12 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
     .fields()
 
   const result = await courseQuery.modelQuery
-  return result
+  const meta = await courseQuery.countTotal()
+
+  return {
+    meta,
+    result,
+  }
 }
 
 const getSingleCourseFromDB = async (id: string) => {
@@ -131,7 +136,7 @@ const deleteCourseFromDB = async (id: string) => {
 
 const assignFacultiesWithCourseIntoDB = async (
   id: string,
-  payload: Partial<TCoursefaculty>,
+  payload: Partial<TCourseFaculty>,
 ) => {
   const result = await CourseFaculty.findByIdAndUpdate(
     id,
@@ -147,9 +152,16 @@ const assignFacultiesWithCourseIntoDB = async (
   return result
 }
 
+const getFacultiesWithCourseFromDB = async (courseId: string) => {
+  const result = await CourseFaculty.findOne({ course: courseId }).populate(
+    'faculties',
+  )
+  return result
+}
+
 const removeFacultiesFromCourseFromDB = async (
   id: string,
-  payload: Partial<TCoursefaculty>,
+  payload: Partial<TCourseFaculty>,
 ) => {
   const result = await CourseFaculty.findByIdAndUpdate(
     id,
@@ -170,5 +182,6 @@ export const CourseServices = {
   updateCourseIntoDB,
   deleteCourseFromDB,
   assignFacultiesWithCourseIntoDB,
+  getFacultiesWithCourseFromDB,
   removeFacultiesFromCourseFromDB,
 }

@@ -2,24 +2,50 @@ import express from 'express'
 import { SemesterRegistrationController } from './semesterRegistration.controller'
 import { SemesterRegistrationValidation } from './SemesterRegistration.validation'
 import validateRequest from '../../middleware/validateRequest'
+import auth from '../../middleware/auth'
+import { USER_ROLE } from '../user/user.constant'
 const router = express.Router()
 
 router.post(
   'create-semester-registration',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   validateRequest(
     SemesterRegistrationValidation.createSemesterRegistrationValidationSchema,
   ),
   SemesterRegistrationController.createSemesterRegistration,
 )
-router.get('/', SemesterRegistrationController.getAllSemesterRegistrations)
-router.get('/:id', SemesterRegistrationController.getSingleSemesterRegistration)
+
+router.get(
+  '/',
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.admin,
+    USER_ROLE.faculty,
+    USER_ROLE.student,
+  ),
+  SemesterRegistrationController.getAllSemesterRegistrations,
+)
+
+router.get(
+  '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  SemesterRegistrationController.getSingleSemesterRegistration,
+)
+
 router.patch(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+
   validateRequest(
     SemesterRegistrationValidation.updateSemesterRegistrationValidationSchema,
   ),
   SemesterRegistrationController.updateSemesterRegistration,
 )
-router.delete('/:id', SemesterRegistrationController.deleteSemesterRegistration)
+
+router.delete(
+  '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  SemesterRegistrationController.deleteSemesterRegistration,
+)
 
 export const SemesterRegistrationRoute = router
